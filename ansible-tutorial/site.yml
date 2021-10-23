@@ -24,5 +24,17 @@
         state: started
         enabled: true
 
+    - name: nginx service start and auto start
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+#    - name: copy test
+#      become: false
+#      copy:
+#        src: copytest.txt
+#        dest: ~/copy.txt
+
 
 

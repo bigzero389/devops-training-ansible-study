@@ -1,0 +1,17 @@
+---
+- name: example test
+  hosts: all
+  become: false
+  tasks:
+    - name: Display environment variable
+      command: "echo {{ ansible_env.HOME | quote }}"
+
+    - name: file copy test
+      copy:
+        src: copytest.txt
+        dest: ~/copy.txt
+
+    - name: python-simplejson install by yum
+      become: true
+      raw: yum -y install python-simplejson
+
