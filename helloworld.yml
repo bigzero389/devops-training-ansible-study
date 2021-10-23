@@ -1,5 +1,0 @@
----
-- hosts: "{{ target | default('thirdAnsibleInventory') }}"
-  become: yes
-  roles:
-    - helloworld
