@@ -1,6 +1,6 @@
 ---
 - name: example test
-  hosts: all
+  hosts: _dyheo_ec2
   become: false
   tasks:
     - name: Display environment variable

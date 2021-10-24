@@ -1,0 +1,31 @@
+---
+- name: 변수의 동작을 확인
+  hosts: localhost
+  vars:
+    my_var: bigzero
+    admin_user:
+      name: dyheo
+      uid: 1001
+    loop_user:
+      - name: user01
+      - name: user02
+      - name: user03
+  tasks:
+    - name: my_var 값을 디버깅으로 확인
+      debug:
+        msg: "변수 my_var 값은 {{ my_var }} 이다."
+
+    - name: 계층형 변수 값을 디버깅으로 확인
+      debug:
+        msg: "변수 admin_user 값은 {{ admin_user.name }} 과 {{ admin_user.uid }} 이다."
+
+    - name: 반복형 변수 값
+      debug:
+        msg: "{% for user in loop_user %}
+              사용자이름은 {{ user.name }} 이다
+              {% endfor %}"
+
+    - name: 필터 Test
+      debug:
+        msg: "{{ 'SAMPLE STRING' | lower }}"
+

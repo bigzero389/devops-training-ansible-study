@@ -1,17 +1,18 @@
 ---
 - name: ansible playbook tutorial
-  hosts: all
+  hosts: _dyheo_ec2
   become: true
+  vars:
+    ansible_ssh_private_key_file: "~/.ssh/dyheo-histech.pem"
   tasks:
-    - name: libselinux-python install
-      yum:
-        name: libselinux-python
-        state: present
-
     - name: EPEL repository install
+#      command: yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y
+      command: amazon-linux-extras install epel -y
+
+    - name: Repository Update Latest
       yum:
-        name: epel-release
-        state: present
+        name: "*"
+        state: latest
 
     - name: nginx install
       yum:
@@ -23,18 +24,3 @@
         name: nginx
         state: started
         enabled: true
-
-    - name: nginx service start and auto start
-      service:
-        name: nginx
-        state: started
-        enabled: true
-
-#    - name: copy test
-#      become: false
-#      copy:
-#        src: copytest.txt
-#        dest: ~/copy.txt
-
-
-

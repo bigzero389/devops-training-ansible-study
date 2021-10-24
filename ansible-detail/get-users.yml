@@ -1,0 +1,23 @@
+---
+- name: 호스트의 사용자 목록을 얻는다.
+  hosts: _dyheo_ec2
+  vars:
+    ansible_ssh_private_key_file: "~/.ssh/dyheo-histech.pem"
+  tasks:
+    - name: /etc/passwd 에서 사용자이름 추출
+      command: cut --delimiter=':' --fields=1 /etc/passwd
+      register: usernames_result
+
+    - name: usernames_result print
+      debug:
+        var: usernames_result
+
+    # 새로운 변수 username_list 지정.
+    - name: usernames_result print 2-1
+      set_fact:
+        username_list: "{{ usernames_result.stdout_lines }}"
+
+    - name: usernames_result print 2-2
+      debug:
+        msg: 이 서버에는 ec2-user 사용자가 존재합니다.
+      when: "'ec2-user' in username_list"
