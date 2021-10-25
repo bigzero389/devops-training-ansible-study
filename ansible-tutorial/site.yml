@@ -24,3 +24,12 @@
         name: nginx
         state: started
         enabled: true
+
+    - name: 인벤터리 전체의 그룹 정보를 표시
+      debug:
+        var: groups
+      run_once: true
+
+    - name: 각 호스트에 할당된 그룹을 표시.
+      debug:
+        var: group_names

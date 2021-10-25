@@ -1,0 +1,20 @@
+---
+- name: 호스트의 사용자 목록을 얻는다.
+  hosts: _dyheo_ec2
+  vars:
+    ansible_ssh_private_key_file: "~/.ssh/dyheo-histech.pem"
+  become: true
+  tasks:
+    - name: 인벤터리 전체의 그룹 정보를 표시
+      debug:
+        var: groups
+      run_once: true
+
+    - name: 인벤터리 전체의 그룹 정보를 표시
+      debug:
+        msg : "{{ item }}"
+      with_items: "{{ groups['_dyheo_ec2'] }}"
+
+    - name: 각 호스트에 할당된 그룹을 표시.
+      debug:
+        var: group_names

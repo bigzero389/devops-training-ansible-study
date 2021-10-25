@@ -52,3 +52,9 @@ ansible-inventory -i inventory_aws_ec2.yml --graph # grouping 확인
 ansible-playbook -i inventory_aws_ec2.yml site.yml # 동적그룹핑에 의한 일괄작업
 ```
 
+## Chapter 04 - ansible-tutorial
+### Roles
+```
+ansible-galaxy init -init-path=roles nginx
+```
+
