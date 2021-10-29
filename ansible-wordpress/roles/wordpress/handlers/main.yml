@@ -1,0 +1,6 @@
+---
+# handlers file for wordpress
+- name: Firewalld service restart
+  service:
+    name: firewalld
+    state: restarted

@@ -1,0 +1,98 @@
+---
+# tasks file for wordpress
+- name: wordpress group create
+  group:
+    name: "{{ wordpress_group }}"
+    system: true
+
+- name: wordpress user create
+  user:
+    name: "{{ wordpress_user }}"
+    home: "{{ wordpress_home }}"
+    shell: /sbin/nologin
+    groups: "{{ wordpress_group }}"
+    append: true
+    createhome: false
+    system: true
+
+- name: wordpress src unzip
+  unarchive:
+    src: "{{ wordpress_src_url }}"
+    dest: "{{ wordpress_document_root }}"
+    remote_src: true
+    owner: "{{ wordpress_user }}"
+    group: "{{ wordpress_group }}"
+    
+- block:
+  - name: auth key read
+    command: "cat {{ wordpress_home }}/unique_keys"
+    changed_when: false
+    run_once: true
+    delegate_to: "{{ ansible_play_hosts[0] }}" # only first host run this block
+    register: cat_unique_keys
+
+  rescue:
+    - name: get auth key
+      uri:
+        url: https://api.wordpress.org/secret-key/1.1/salt/
+        return_content: true # unless return_content is true, it can't get return value from url
+      run_once: true
+      register: get_unique_keys
+
+  always:
+    - name: display register
+      debug:
+        var: cat_unique_keys
+
+    - name: set auth key to variable
+      set_fact: # set variable to wordpress_unique_keys
+        wordpress_unique_keys: "{{ (get_unique_keys.content if cat_unique_keys['failed'] else cat_unique_keys.stdout)|trim }}"
+
+    - name: save auth key to file
+      copy:
+        backup: true
+        content: "{{ wordpress_unique_keys }}" # make simple file instead template module
+        dest: "{{ wordpress_home }}/unique_keys"
+
+    - name: deploy copy wordpress config
+      template:
+        src: wp-config.j2.php
+        dest: "{{ wordpress_home }}/wp-config.php"
+        owner: "{{ wordpress_user }}"
+        group: "{{ wordpress_group }}"
+
+    - name: display 
+      debug:
+        msg: 
+        - "php {{ php_fpm_config_dir }}"
+        - "wordpress {{ wordpress_php_fpm_config_dir }}"
+
+    - name: deploy PHP-FPM setting
+      template:
+        src: wordpress.fpm.j2.conf
+        dest: "{{ wordpress_php_fpm_config_dir }}/wordpress.conf"
+      notify:
+        - PHP-FPM restart
+
+    - name: PHP-FPM setting test
+      command: php-fpm -t
+      changed_when: false
+
+    - name: deploy nginx setting
+      template:
+        src: wordpress.nginx.j2.conf
+        dest: "{{ wordpress_nginx_config_dir }}/wordpress.conf"
+      notify:
+        - nginx reload
+
+    - name: nginx setting test
+      command: nginx -t
+      changed_when: false
+
+    - name: Wordpress starting port set public in Firewalld
+      firewalld:
+        port: "{{ wordpress_port }}/tcp"
+        permanent: true
+        state: enabled
+      notify:
+        - Firewalld service restart

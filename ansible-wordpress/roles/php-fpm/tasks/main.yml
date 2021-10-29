@@ -1,0 +1,23 @@
+---
+# tasks file for php-fpm
+- name: php-fpm module install
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - php-fpm
+    - php-devel
+    - php-enchant
+    - php-mbstring
+    - php-process
+    - php-xml
+    - php-gd
+    - "{{ php_fpm_additional_packages }}"
+    - php-mysql
+  notify:
+    - PHP-FPM restart
+
+- name: PHP-FPM start
+  service:
+    name: php-fpm
+    state: started
+    enabled: true

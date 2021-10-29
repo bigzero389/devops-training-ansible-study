@@ -1,0 +1,33 @@
+---
+# tasks file for mariadb
+- name: mariadb install
+  yum:
+    name: 
+      - mariadb-server
+
+- name: mariadb install
+  pip:
+    name: 
+      - pymysql
+    state: present
+
+- name: mariadb start
+  service:
+    name: mariadb
+    state: started
+    enabled: true
+
+- name: mariadb system db create
+  mysql_db:
+    name: "{{ item.name }}"
+    encoding: "{{ item.encoding|default('utf8') }}"
+    collation: "{{ item.collation| default('utf8_general_ci') }}"
+  with_items: "{{ mariadb_databases }}"
+    
+- name: mariadb user create
+  mysql_user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    host: "{{ item.host|default('localhost') }}"
+    priv: "{{ item.priv|default('') }}"
+  with_items: "{{ mariadb_users }}"

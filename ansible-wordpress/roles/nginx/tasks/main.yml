@@ -1,11 +1,8 @@
 # tasks file for nginx
-- name: install package
+- name: nginx install
   yum:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - libselinux-python
-    - nginx
+    name:
+      - nginx
 
 - name: start nginx
   service:
@@ -19,7 +16,7 @@
     dest: /etc/nginx/nginx.conf
     validate: nginx -t -c %s
   notify:
-    - nginx reloaded
+    - nginx reload
 
 - name: nginx group create
   group:

@@ -1,0 +1,35 @@
+---
+- name: ansible playbook tutorial
+  hosts: _dyheo_ec2
+  become: true
+  vars:
+    ansible_ssh_private_key_file: "~/.ssh/dyheo-histech.pem"
+  tasks:
+    - name: EPEL repository install
+#      command: yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y
+      command: amazon-linux-extras install epel -y
+
+    - name: Repository Update Latest
+      yum:
+        name: "*"
+        state: latest
+
+    - name: nginx install
+      yum:
+        name: nginx
+        state: present
+
+    - name: nginx service start and auto start
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: 인벤터리 전체의 그룹 정보를 표시
+      debug:
+        var: groups
+      run_once: true
+
+    - name: 각 호스트에 할당된 그룹을 표시.
+      debug:
+        var: group_names

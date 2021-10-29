@@ -1,0 +1,51 @@
+---
+- name: wordpress install
+  hosts: _dyheo_ec2
+  become: true
+  vars:
+    ansible_ssh_private_key_file: "~/.ssh/dyheo-histech.pem"
+    db_name: wordpress
+    db_user: wordpress
+    db_password: mysQ1P@ssw0rd
+  pre_tasks:
+    - include: /Users/architect/Code/DevOps-Training-Ansible/ansible-common/epel.yml
+  roles:
+    - name: common
+      tags:
+        - common
+    - name: mariadb
+      vars:
+        mariadb_databases:
+          - name: "{{ db_name }}"
+        mariadb_users:
+          - name: "{{ db_user }}"
+            password: "{{ db_password }}"
+            #priv: "{{ db_name | regex_replace('[.-]', '_') }}.*:ALL/*.*:PROCESS"
+            priv: "{{ db_name }}.*:ALL"
+      tags:
+        - mariadb
+    - name: php-fpm
+      vars:
+        php_fpm_addtional_packages:
+          - php-mysqlnd
+      tags:
+        - php-fpm
+    - name: nginx
+      vars:
+        nginx_default_port: 8080
+      tags:
+        - nginx
+    - name: wordpress
+      vars:
+        wordpress_db_name: "{{ db_name }}"
+        wordpress_db_user_name: "{{ db_user }}"
+        wordpress_db_user_password: "{{ db_password }}"
+        wordpress_nginx_user: "{{ nginx_user }}"
+        wordpress_nginx_group: "{{ nginx_group }}"
+        wordpress_nginx_config_dir: "{{ nginx_config_dir }}"
+        wordpress_php_fpm_config_dir: "{{ php_fpm_config_dir }}"
+      tags:
+        - wordpress
+
+
+

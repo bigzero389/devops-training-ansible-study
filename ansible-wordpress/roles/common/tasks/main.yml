@@ -1,0 +1,40 @@
+---
+# tasks file for common
+- name: python selinux library install
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - python3
+    - pip
+    - libselinux-python
+    - policycoreutils-python
+    - python-firewall
+    - firewalld
+
+#- name: python3 default set python
+#  shell: alternatives --install /usr/bin/python python /usr/bin/python 60
+#
+#- name: pip3 default set pip
+#  command: pip3 install pip --upgrade
+
+- name: selinux disabled
+  selinux:
+    policy: targeted
+    state: permissive
+  register: common_make_selinux_permissive
+
+- name: debug selinux disabled mesage
+  debug:
+    var: common_make_selinux_permissive
+
+- name: Reboot EC2
+  reboot:
+    reboot_timeout: 1800
+  when: common_make_selinux_permissive["reboot_required"] == true
+
+- name: firewalld setting
+  service:
+    name: firewalld
+    state: started
+    enabled: true
+

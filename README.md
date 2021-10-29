@@ -58,3 +58,14 @@ ansible-playbook -i inventory_aws_ec2.yml site.yml # 동적그룹핑에 의한 �
 ansible-galaxy init -init-path=roles nginx
 ```
 
+## Chapter 05 - ansible-wordpress
+* role multi 생성
+```
+$ roles=(common mariadb php-fpm wordpress)
+$ for role in ${roles[@]}; do ansible-galaxy init --init-path=roles $role; done
+```
+* tag 를 넣으면 해당 tag 만 실행가능하다.
+```
+$ ansible-playbook wordpress.yml -tags="common,mariadb"
+```
+
