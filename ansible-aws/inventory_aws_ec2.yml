@@ -1,0 +1,11 @@
+plugin: aws_ec2
+regions:
+  - ap-northeast-2
+keyed_groups:
+  - key: tags.Group
+fileters:
+  instance-state-name: running
+  tag:Creator: dyheo
+compose:
+  ansible_host: public_ip_address
+    

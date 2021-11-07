@@ -42,7 +42,7 @@ become_ask_pass = false
 ansible all -i inventory -m ping # 보안그룹에 ICMP 를 허용해야 한다.
 ansible all -i inventory -m setup
 ansible --private-key=~/.ssh/dyheo-histech.pem -i inventory ./site.yml 
-ansible-inventory -i inventory_aws_ec2.yml --graph
+ansible-inventory -i inventory_aws_ec2.yml --graph # hosts list를 보여준다.
 ```
 
 ## Chapter 03 - ansible-detail

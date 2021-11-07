@@ -1,0 +1,20 @@
+---
+- hosts: _dyheo_ec2
+  become: true
+  vars:
+    ansible_ssh_private_key_file: "~/.ssh/dyheo-histech.pem"
+# pre_tasks:
+#   - include: /Users/architect/Code/DevOps-Training-Ansible/ansible-common/epel.yml
+  vars_prompt:
+    - name: "ec2_name"
+      private: no
+    - name: "ec2_instance_type"
+      private: no
+      default: "t2.micro"
+    - name: "ec2_key_name"
+      private: no
+    - name: "ec2_group"
+      private: no
+      default: "default"
+  roles:
+    - { role: ec2, tags: [ec2] }
